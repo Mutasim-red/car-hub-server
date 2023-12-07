@@ -20,7 +20,8 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     //card
-    const vehicleCollection = client.db("rental-service").collection("vehicles") 
+    const vehicleCollection = client.db("rental-service").collection("vehicles");
+    const teamCollection = client .db("rental-service").collection("team");
     app.post('/add-a-vehicle',async(req, res) =>{
       const vehicle = req.body;
       const result = await vehicleCollection.insertOne(vehicle)
@@ -53,12 +54,20 @@ async function run() {
      const result =await vehicleCollection.updateOne(filter, updates);
       res.send(result)
     })
+    //Api for deleting a single vehicle
     app.delete("/delete-by-id/:id", async(req,res)=>{
       const id = req.params.id;
      const filter = {_id: new ObjectId(id)};
       //now call the update 1 method for deleting
 
       const result = await vehicleCollection.deleteOne(filter);
+      res.send(result);
+    })
+
+    //post a single teammate
+    app.post("/add-teammate",async(req,res) =>{
+      const teammate = req.body;
+      const result =await teamCollection.insertOne(teammate)
       res.send(result);
     })
   } finally {
