@@ -46,12 +46,20 @@ async function run() {
     app.put("/update-by-id/:id",async(req,res)=>{
      const id = req.params.id;
      const filter = {_id: new ObjectId(id)};
-     const updatedvehicle =req.send;
+     const updatedvehicle =req.body;
     // console.log(updatedvehicle)
      const updates = {$set:updatedvehicle}
      //now call the update 1 method for updating
      const result =await vehicleCollection.updateOne(filter, updates);
       res.send(result)
+    })
+    app.delete("/delete-by-id/:id", async(req,res)=>{
+      const id = req.params.id;
+     const filter = {_id: new ObjectId(id)};
+      //now call the update 1 method for deleting
+
+      const result = await vehicleCollection.deleteOne(filter);
+      res.send(result);
     })
   } finally {
     
