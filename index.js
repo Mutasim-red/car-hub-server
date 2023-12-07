@@ -41,6 +41,18 @@ async function run() {
      const result = await vehicleCollection.findOne({_id: new ObjectId(id)})
       res.send(result)
     })
+
+    //Api for updating a single vehicle
+    app.put("/update-by-id/:id",async(req,res)=>{
+     const id = req.params.id;
+     const filter = {_id: new ObjectId(id)};
+     const updatedvehicle =req.send;
+    // console.log(updatedvehicle)
+     const updates = {$set:updatedvehicle}
+     //now call the update 1 method for updating
+     const result =await vehicleCollection.updateOne(filter, updates);
+      res.send(result)
+    })
   } finally {
     
     
