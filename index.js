@@ -1,0 +1,56 @@
+const express = require('express')
+const cors = require("cors");
+const app = express()
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+require("dotenv").config();
+const port = 3000
+
+app.use(cors());
+app.use(express.json());
+console.log(process.env.DB_USER,process.env.DB_PASS)
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.dyduvtf.mongodb.net/?retryWrites=true&w=majority`;
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
+
+async function run() {
+  try {
+    //card
+    const vehicleCollection = client.db("rental-service").collection("vehicles") 
+    app.post('/add-a-vehicle',async(req, res) =>{
+      const vehicle = req.body;
+      const result = await vehicleCollection.insertOne(vehicle)
+      res.send(result)
+    })
+    //Api for fetching all vehicles
+    app.get("/all-vehicles", async(req,res) =>{
+    const result =  await vehicleCollection.find().toArray();
+    res.send(result);
+    })
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    //Api for fetching single vehicle details
+
+    app.get("/vehicle/:id",async(req,res)=>{
+     const id= req.params.id;
+     console.log(id); 
+     //Find a vehicle using the id passed as param
+     const result = await vehicleCollection.findOne({_id: new ObjectId(id)})
+      res.send(result)
+    })
+  } finally {
+    
+    
+  }
+}
+run().catch(console.dir);
+app.get('/', (req, res)=> {
+  res.send('Hello mongo server running!')
+})
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
